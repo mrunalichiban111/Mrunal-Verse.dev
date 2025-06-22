@@ -1,14 +1,15 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import { motion } from "framer-motion"
 import { Github, Linkedin, Twitter, Mail, Heart, ExternalLink } from "lucide-react"
 
 export function Footer() {
   const socialLinks = [
-    { name: "GitHub", icon: Github, href: "#", color: "hover:text-purple-400" },
-    { name: "LinkedIn", icon: Linkedin, href: "#", color: "hover:text-blue-400" },
-    { name: "Twitter", icon: Twitter, href: "#", color: "hover:text-cyan-400" },
-    { name: "Email", icon: Mail, href: "#", color: "hover:text-pink-400" },
+    { name: "GitHub", icon: Github, href: "https://github.com/mrunalichiban111", color: "hover:text-purple-400" },
+    { name: "LinkedIn", icon: Linkedin, href: " https://www.linkedin.com/in/mrunal-kulkarni-16b44b314/", color: "hover:text-blue-400" },
+    { name: "Twitter", icon: Twitter, href: "https://x.com/Mrunal_111", color: "hover:text-cyan-400" },
+    { name: "Email", icon: Mail, href: "mrunalkul185@gmail.com", color: "hover:text-pink-400" },
   ]
 
   const quickLinks = [
@@ -17,6 +18,19 @@ export function Footer() {
     { name: "Skills", href: "#skills" },
     { name: "Contact", href: "#contact" },
   ]
+
+  const [positions, setPositions] = useState<
+    { x: number; y: number; duration: number }[]
+  >([])
+
+  useEffect(() => {
+    const newPositions = Array.from({ length: 5 }, () => ({
+      x: Math.random() * window.innerWidth,
+      y: Math.random() * 200 + 100,
+      duration: Math.random() * 10 + 5,
+    }))
+    setPositions(newPositions)
+  }, [])
 
   return (
     <footer
@@ -100,7 +114,7 @@ export function Footer() {
           >
             <h4 className="text-xl font-semibold text-white">Get In Touch</h4>
             <div className="space-y-4">
-              <p className="text-gray-300">Ready to work together? Let's create something amazing!</p>
+              <p className="text-gray-300">Ready to work together? Let&apos;s create something amazing!</p>
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -134,23 +148,20 @@ export function Footer() {
         </motion.div>
       </div>
 
-      {/* Floating Elements */}
-      {[...Array(5)].map((_, i) => (
+      {/* Floating Bubbles */}
+      {positions.map((pos, i) => (
         <motion.div
           key={i}
           className="absolute w-2 h-2 bg-purple-400/30 rounded-full"
-          initial={{
-            x: Math.random() * window.innerWidth,
-            y: Math.random() * 200 + 100,
-          }}
+          initial={{ x: pos.x, y: pos.y }}
           animate={{
             x: Math.random() * window.innerWidth,
             y: Math.random() * 200 + 100,
             opacity: [0.3, 0.8, 0.3],
           }}
           transition={{
-            duration: Math.random() * 10 + 5,
-            repeat: Number.POSITIVE_INFINITY,
+            duration: pos.duration,
+            repeat: Infinity,
             repeatType: "reverse",
             ease: "linear",
           }}

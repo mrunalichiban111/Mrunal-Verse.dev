@@ -7,21 +7,57 @@ import { Home, User, Briefcase, Mail, Menu, X } from "lucide-react"
 export function FloatingNavbar() {
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState("home")
 
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
+      
+      // Update active section based on scroll position
+      const sections = ['home', 'about', 'projects', 'contact']
+      for (const section of sections) {
+        const element = document.getElementById(section)
+        if (element) {
+          const rect = element.getBoundingClientRect()
+          if (rect.top <= 100 && rect.bottom >= 100) {
+            setActiveSection(section)
+            break
+          }
+        }
+      }
     }
+    
     window.addEventListener("scroll", handleScroll)
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
   const navItems = [
-    { name: "Home", icon: Home, href: "#home" },
-    { name: "About", icon: User, href: "#about" },
-    { name: "Projects", icon: Briefcase, href: "#projects" },
-    { name: "Contact", icon: Mail, href: "#contact" },
+    { name: "Home", icon: Home, href: "#home", section: "home" },
+    { name: "About", icon: User, href: "#about", section: "about" },
+    { name: "Projects", icon: Briefcase, href: "#projects", section: "projects" },
+    { name: "Contact", icon: Mail, href: "#contact", section: "contact" },
   ]
+
+  const handleNavigation = (href: string) => {
+    const sectionId = href.replace('#', '')
+    const element = document.getElementById(sectionId)
+    if (element) {
+      // Smooth scroll to the section
+      element.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+      })
+      
+      // Update URL without page reload
+      window.history.pushState(null, '', href)
+      
+      // Update active section
+      setActiveSection(sectionId)
+      
+      // Close mobile menu if open
+      setIsMobileMenuOpen(false)
+    }
+  }
 
   return (
     <motion.nav
@@ -47,10 +83,14 @@ export function FloatingNavbar() {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 + 0.3 }}
-            className="flex items-center space-x-2 text-white/80 hover:text-cyan-400 transition-all duration-300 group"
+            className={`flex items-center space-x-2 transition-all duration-300 group ${
+              activeSection === item.section 
+                ? "text-cyan-400" 
+                : "text-white/80 hover:text-cyan-400"
+            }`}
             onClick={(e) => {
               e.preventDefault()
-              document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" })
+              handleNavigation(item.href)
             }}
           >
             <item.icon className="w-4 h-4 group-hover:scale-110 transition-transform" />
@@ -61,7 +101,11 @@ export function FloatingNavbar() {
 
       {/* Mobile Navigation */}
       <div className="md:hidden flex items-center">
-        <button onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} className="text-white p-2">
+        <button 
+          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)} 
+          className="text-white p-2"
+          aria-label="Toggle menu"
+        >
           {isMobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
@@ -78,11 +122,14 @@ export function FloatingNavbar() {
               <a
                 key={item.name}
                 href={item.href}
-                className="flex items-center space-x-3 text-white/80 hover:text-cyan-400 py-3 transition-colors"
+                className={`flex items-center space-x-3 py-3 transition-colors ${
+                  activeSection === item.section 
+                    ? "text-cyan-400" 
+                    : "text-white/80 hover:text-cyan-400"
+                }`}
                 onClick={(e) => {
                   e.preventDefault()
-                  document.querySelector(item.href)?.scrollIntoView({ behavior: "smooth" })
-                  setIsMobileMenuOpen(false)
+                  handleNavigation(item.href)
                 }}
               >
                 <item.icon className="w-4 h-4" />

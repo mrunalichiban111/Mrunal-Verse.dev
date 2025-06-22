@@ -1,10 +1,8 @@
 'use client'
-import Image from "next/image";
-import Spline from '@splinetool/react-spline';
+
 import Hero from "@/components/Hero";
 import Preloader from "@/components/Preloader";
-import { TextHoverEffect } from "@/components/TextHover";
-import { Spotlight } from "@/components/spotlight";
+
 import { FloatingNavbar } from "@/components/floating-navbar";
 import { Footer } from "@/components/Footer";
 import { useEffect } from "react"
